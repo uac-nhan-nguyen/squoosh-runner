@@ -1,0 +1,25 @@
+name: squoosh_runner
+description: Use @squoosh/cli through rest api
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+
+dependencies:
+  shelf:
+  shelf_plus:
+  test:
+  glob: ^2.1.1
+  shelf_static: ^1.1.1
+  aws_cloudwatch_api: ^2.0.0
+  aws_logs_api: ^2.0.0
+  aws_cloudformation_api: ^2.0.0
+  aws_apigatewayv2_api: ^2.0.0
+  ds_env:
+  ds_collection:
+  ds_future: ^1.0.5
+  ds_cache: ^1.0.1
+  http:
+  json2yaml: ^3.0.1
+  yaml:
+  intl:
+  uuid:
