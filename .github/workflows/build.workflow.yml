@@ -31,6 +31,6 @@ jobs:
           done
           chmod +x src/*.exe
           export TARGET_GZ=${{ matrix.os }}_${{ github.event.release.tag_name }}.tar.gz
-          tar -czvf $TARGET_GZ bin/*.exe
+          tar -czvf $TARGET_GZ src/*.exe
           gh release upload ${{ github.event.release.tag_name }} $TARGET_GZ
     
