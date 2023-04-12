@@ -10,7 +10,8 @@ env:
   GH_TOKEN: ${{ github.token }}
 
 jobs:
-  upload:
+  buildAndUpload:
+    permissions: write-all
     strategy:
       matrix:
         os: [ ubuntu ]
