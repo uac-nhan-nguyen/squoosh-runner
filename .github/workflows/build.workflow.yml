@@ -6,6 +6,9 @@ on:
     types:
       - created
 
+env:
+  GH_TOKEN: ${{ github.token }}
+
 jobs:
   upload:
     strategy:
@@ -19,7 +22,7 @@ jobs:
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: 2.18.0
-      - name: compile
+      - name: Compile to exe
         shell: bash
         run: |
           dart pub get
@@ -29,7 +32,7 @@ jobs:
               echo "Compiling $dart_file"
               dart compile exe $dart_file
           done
-      - name: upload
+      - name: Upload to release
         shell: bash
         run: |
           chmod +x src/*.exe
