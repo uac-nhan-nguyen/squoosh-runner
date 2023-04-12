@@ -1,0 +1,6 @@
+#!/bin/bash
+aws s3 cp s3://squoosh-runner/release/main.exe .
+chmod +x main.exe
+echo API_KEY=TO_REPLACE > .secrets
+export PORT=80
+./main.exe

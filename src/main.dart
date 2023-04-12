@@ -17,6 +17,7 @@ void main() async {
   authApp.use(apiAuthorizer());
   authApp.post('/job', addJob);
 
+  inputDir.createSync(recursive: true);
   outputDir.createSync(recursive: true);
   publicDir.createSync(recursive: true);
 
