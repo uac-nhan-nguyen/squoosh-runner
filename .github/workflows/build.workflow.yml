@@ -1,10 +1,10 @@
 name: Build and upload release
 
-on: workflow_dispatch
-#on:
-#  release:
-#    types:
-#      - created
+#on: workflow_dispatch
+on:
+  release:
+    types:
+      - created
 
 jobs:
   upload:
@@ -19,7 +19,7 @@ jobs:
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: 2.18.0
-      - name: compile and upload
+      - name: compile
         shell: bash
         run: |
           dart pub get
@@ -29,6 +29,9 @@ jobs:
               echo "Compiling $dart_file"
               dart compile exe $dart_file
           done
+      - name: upload
+        shell: bash
+        run: |
           chmod +x src/*.exe
           export TARGET_GZ=${{ matrix.os }}_${{ github.event.release.tag_name }}.tar.gz
           tar -czvf $TARGET_GZ src/*.exe
