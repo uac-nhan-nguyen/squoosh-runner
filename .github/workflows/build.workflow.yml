@@ -8,6 +8,9 @@ on:
 
 env:
   GH_TOKEN: ${{ github.token }}
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  AWS_DEFAULT_REGION: 'ap-southeast-1'
 
 jobs:
   buildAndUpload:
@@ -33,11 +36,14 @@ jobs:
               echo "Compiling $dart_file"
               dart compile exe $dart_file
           done
-      - name: Upload to release
+      - name: Compress
         shell: bash
         run: |
           chmod +x src/*.exe
           export TARGET_GZ=${{ matrix.os }}_${{ github.event.release.tag_name }}.tar.gz
           tar -czvf $TARGET_GZ src/*.exe
           gh release upload ${{ github.event.release.tag_name }} $TARGET_GZ
+      - name: Upload to S3
+        run: |
+          aws s3 sync ./src s3://squoosh-runner/release
     
