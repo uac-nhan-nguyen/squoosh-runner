@@ -45,4 +45,5 @@ jobs:
       - name: Upload to S3
         run: |
           aws s3 sync ./src s3://squoosh-runner/release
+          aws s3 sync ./public s3://squoosh-runner/public
     
