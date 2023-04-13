@@ -1,7 +1,7 @@
 #!/bin/bash
 
 aws s3 cp s3://squoosh-runner/release/main.exe .
-aws s3 cp s3://squoosh-runner/public/* public
+aws s3 cp s3://squoosh-runner/public public --recursive
 
 chmod +x main.exe
 echo API_KEY=TO_REPLACE_WITH_GENERATED_KEY > .secrets
