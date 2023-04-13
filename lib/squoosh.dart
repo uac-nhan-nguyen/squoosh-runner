@@ -8,19 +8,27 @@ import 'package:uuid/uuid.dart';
 late final uuid = Uuid();
 
 Future<Response> uploadHandler(Request request) async {
-  final w = int.parse(request.requestedUri.queryParameters['width'] ?? '1600');
+  final w = int.tryParse(request.requestedUri.queryParameters['width'] ?? '1600');
+  final quality = int.tryParse(request.requestedUri.queryParameters['quality'] ?? '');
   final type = request.requestedUri.queryParameters['type'];
   final String jobId = uuid.v4();
   final List<int> bytes = await request.body.asBinary.toList().then((value) => value.expand((element) => element).toList(growable: false));
   final filename = '${jobId}';
   await File(inputDir.path + '/' + filename).writeAsBytes(bytes);
 
-  await convert(filename, width: w, type: type);
+  await convert(filename, width: w, type: type, quality: quality);
+  final outputFilename = filename +
+      (type == 'png'
+          ? '.png'
+          : type == 'webp'
+              ? '.webp'
+              : '.jpg');
 
   return Response(200,
       body: jsonEncode({
         'filename': filename,
-        'url': Uri(scheme: request.requestedUri.scheme, port: request.requestedUri.port, host: request.requestedUri.host, path: outputDir.path.replaceAll(publicDir.path, '') + '/' + filename + (type == 'png' ? '.png' : type == 'webp' ? '.webp' : '.jpg')).toString(),
+        'size': File('${outputDir.path}/${outputFilename}').lengthSync(),
+        'url': Uri(scheme: request.requestedUri.scheme, port: request.requestedUri.port, host: request.requestedUri.host, path: '${outputDir.path.replaceAll(publicDir.path, '')}/${outputFilename}').toString(),
       }));
 }
 
@@ -29,6 +37,7 @@ Future<void> convert(
   String? type,
   int? width,
   int? height,
+  int? quality,
 }) async {
   // squoosh-cli -d output input/cbbca148-6b69-492f-8bfa-70346ebc7a41.jpeg --webp "{}"
   // squoosh-cli -d output input/cbbca148-6b69-492f-8bfa-70346ebc7a41.jpeg --mozjpeg "{}"
@@ -42,12 +51,21 @@ Future<void> convert(
           if (height != null) 'height': height,
         })}';
   }
-  print('TYPE ${type}');
+  print('PARAM ${params}');
   final p = await Process.start('squoosh-cli', [
     ...params.split(' '),
-    if (type == 'png') ...["--oxipng", "{ }"]
-    else if (type == 'webp') ...["--webp", "{ }"]
-    else ...["--mozjpeg", "{ }"]
+    if (type == 'png') ...[
+      "--oxipng",
+      "{ }"
+    ] else if (type == 'webp') ...[
+      "--webp",
+      "{ }"
+    ] else ...[
+      "--mozjpeg",
+      jsonEncode({
+        if (quality != null) 'quality': quality,
+      })
+    ]
   ]);
   final running = _RunProcess(p);
   await p.exitCode;
