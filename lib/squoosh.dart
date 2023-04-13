@@ -7,7 +7,7 @@ import 'package:uuid/uuid.dart';
 
 late final uuid = Uuid();
 
-Future<Response> addJob(Request request) async {
+Future<Response> uploadHandler(Request request) async {
   final w = int.parse(request.requestedUri.queryParameters['width'] ?? '1600');
   final type = request.requestedUri.queryParameters['type'];
   final String jobId = uuid.v4();

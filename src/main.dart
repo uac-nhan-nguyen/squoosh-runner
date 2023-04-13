@@ -5,7 +5,7 @@ import 'package:shelf_plus/shelf_plus.dart';
 import 'package:squoosh_runner/apiAuthorizer.dart';
 import 'package:squoosh_runner/constants.dart';
 import 'package:squoosh_runner/home.dart';
-import 'package:squoosh_runner/job.dart';
+import 'package:squoosh_runner/squoosh.dart';
 
 void main() async {
   final app = Router().plus;
@@ -15,7 +15,7 @@ void main() async {
   final authApp = Router().plus;
   authApp.use(logRequests());
   authApp.use(apiAuthorizer());
-  authApp.post('/job', addJob);
+  authApp.post('/squoosh', uploadHandler);
 
   inputDir.createSync(recursive: true);
   outputDir.createSync(recursive: true);
@@ -30,6 +30,6 @@ void main() async {
   // Enable content compression
   server.autoCompress = true;
 
-  final url = 'http://${server.address.host}:${server.port}';
-  print('Serving at ${url}');
+  final url = 'http://localhost:${server.port}';
+  print('Host [${server.address.host}]. Serving at ${url}');
 }

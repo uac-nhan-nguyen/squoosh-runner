@@ -1,6 +1,18 @@
 #!/bin/bash
+
 aws s3 cp s3://squoosh-runner/release/main.exe .
+aws s3 cp s3://squoosh-runner/public/* public
+
 chmod +x main.exe
-echo API_KEY=TO_REPLACE > .secrets
+echo API_KEY=TO_REPLACE_WITH_GENERATED_KEY > .secrets
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+nvm install 16
+node -e "console.log('Running Node.js ' + process.version)"
+npm install -g @squoosh/cli
+
+
 export PORT=80
 ./main.exe
