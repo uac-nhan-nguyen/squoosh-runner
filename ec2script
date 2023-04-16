@@ -1,11 +1,21 @@
 #!/bin/bash
 
+# Inject access keys if using lightsail
+mkdir ~/.aws
+touch ~/.aws/credentials
+echo "[default]
+aws_access_key_id=ACCESS_KEY_ID
+aws_secret_access_key=ACCESS_KEY_SECRET
+" >> ~/.aws/credentials
+
+# Download build executable from s3
 aws s3 cp s3://squoosh-runner/release/main.exe .
 aws s3 cp s3://squoosh-runner/public public --recursive
 
 chmod +x main.exe
 echo API_KEY=TO_REPLACE_WITH_GENERATED_KEY > .secrets
 
+# Download and install @squoost/cli
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -13,6 +23,6 @@ nvm install 16
 node -e "console.log('Running Node.js ' + process.version)"
 npm install -g @squoosh/cli
 
-
+# Start
 export PORT=80
 ./main.exe
